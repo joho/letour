@@ -7,6 +7,7 @@ body {
 
 a, a:visited, a:hover {
   color: #336688;
+  text-decoration: none;
 }
 
 #container {
@@ -25,4 +26,5 @@ header h1 {
 
 footer {
   border-top: solid 1px black;
+  font-size: 0.8em;
 }
