@@ -27,6 +27,6 @@ module TourHighlightsLinks
 end
 
 get '/' do
-  TourHighlightsLinks.get_links.to_s
+  erb :index, :locals => { :video_links => TourHighlightsLinks.get_links }
 end
 
