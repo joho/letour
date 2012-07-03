@@ -11,30 +11,40 @@
 	<meta name="description" content="A page that links straight into the most recent SBS Tour De France highlights without seeing any of their spoilerriffic news pages on the way.">
 	<meta name="author" content="John Barton">
 
-	<meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="/styles.css" />
 
 </head>
 <body>
-<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-<header>
-  <h1>Spoiler Free SBS Tour Highlights</h1>
-</header>
-<div role="main">
-  <ul>
-    <% video_links.each do |title, href| %>
-      <li>
-        <a href="<%= href %>" title="<%= title %>">
-          <%= title %>
-        </a>
-      </li>
-    <% end %>
-  </ul>
-</div>
-<footer>
-  <p>
-    Made by <a href="http://whoisjohnbarton.com/">John</a>, who works on <a href="http://goodfil.ms">Goodfilms</a>, which is the best social movie website ever.
-  </p>
-</footer>
+  <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+  <div id="container">
+    <header>
+      <h1>Spoiler Free SBS Tour De France Highlights</h1>
+    </header>
+    <div role="main">
+      <p>
+        Sometimes, you can't stay up all night watching the tour.
+      </p>
+      <p>
+        If you want to watch the SBS highlights of the stage the morning after, but don't want the result spoiled by browsing past all the other articles and videos about the day's racing, then just use one of the links below to skip right through to the highlights without all the spoilers.
+      </p>
+      <ul>
+        <% video_links.each do |title, href| %>
+          <li>
+            <a href="<%= href %>" title="<%= title %>">
+              <%= title %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <footer>
+      <p>
+        Made by <a href="http://whoisjohnbarton.com/">John</a>, who works on <a href="http://goodfil.ms">Goodfilms</a>, which is the best social movie website ever.
+      </p>
+    </footer>
+  </div>
 <script>
 	var _gaq=[['_setAccount','UA-708262-4'],['_trackPageview']];
 	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];

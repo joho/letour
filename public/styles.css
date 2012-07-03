@@ -1,0 +1,28 @@
+body {
+  background-color: #FFCC00;
+
+  font-family: Helvetica, Arial, sans-serif;
+  color: black;
+}
+
+a, a:visited, a:hover {
+  color: #336688;
+}
+
+#container {
+  width: 550px;
+  margin: 0 auto;
+}
+
+header {
+  border-bottom: solid 4px black;
+}
+
+header h1 {
+  font-size: 3em;
+  margin-bottom: 5px;
+}
+
+footer {
+  border-top: solid 1px black;
+}
