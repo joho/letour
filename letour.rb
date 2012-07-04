@@ -10,7 +10,7 @@ require "nokogiri"
 require "sinatra"
 
 module TourHighlightsLinks
-  TITLE_REGEX = /tour de france.+Stage \d+.+highlights/i
+  TITLE_REGEX = /tour de france.+(stage \d+|prologue).+highlights/i
 
   def self.get_links
     get_links_from_json
