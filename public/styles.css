@@ -28,3 +28,11 @@ footer {
   border-top: solid 1px black;
   font-size: 0.8em;
 }
+
+div[role="main"] {
+  line-height: 1.2em
+}
+
+li {
+  list-style-type: square;
+}
