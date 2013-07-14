@@ -1,8 +1,8 @@
-source :rubygems
+source "https://rubygems.org"
 
 gem 'nokogiri'
 gem 'sinatra'
-gem 'thin'
+gem 'puma'
 
 group :development do
   gem 'foreman'
