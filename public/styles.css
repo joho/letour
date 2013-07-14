@@ -30,9 +30,13 @@ footer {
 }
 
 div[role="main"] {
-  line-height: 1.2em
+  line-height: 1.2em;
 }
 
 li {
   list-style-type: square;
+}
+
+p {
+  line-height: 1.5em;
 }
