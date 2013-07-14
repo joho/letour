@@ -10,7 +10,7 @@ require "nokogiri"
 require "sinatra"
 
 module TourHighlightsLinks
-  TITLE_REGEX = /tour de france.+(stage \d+|prologue).+highlights/i
+  TITLE_REGEX = /tour de france.+highlights.+(stage \d+|prologue)/i
 
   def self.get_links
     get_links_from_json
@@ -32,7 +32,7 @@ private
   end
 
   def self.get_links_from_json
-    feed_url = "http://www.sbs.com.au/api/video_feed/f/dYtmxB/section-sbstv?form=json&byCategories=Sport%2FCycling&byCustomValue=%7Bgrouping%7D%7BTour+De+France%7D"
+    feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-sbstv/?range=1-100&byCategories=Sport/Cycling&form=json&defaultThumbnailAssetType=Thumbnail"
 
     video_json = JSON.load(open(feed_url))
 
