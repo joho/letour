@@ -1,8 +1,5 @@
 <!doctype html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -17,7 +14,6 @@
 
 </head>
 <body>
-  <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
   <div id="container">
     <header>
       <h1>
@@ -34,13 +30,13 @@
         If you want to watch the SBS highlights of the stage the morning after, but don't want the result spoiled by browsing past all the other articles and videos about the day's racing, then just use one of the links below to skip right through to the highlights without all the spoilers.
       </p>
       <ul>
-        <% video_links.each do |title, href| %>
+        {{range .}}
           <li>
-            <a href="<%= href %>" title="<%= title %>">
-              <%= title %>
+            <a href="{{ .VideoUrl }}" title="{{ .Title }}">
+              {{ .Title }}
             </a>
           </li>
-        <% end %>
+        {{ end }}
       </ul>
     </div>
     <footer>
