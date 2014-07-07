@@ -47,8 +47,9 @@ type Feed struct {
 }
 
 type Entry struct {
-	Title string  `"json":"title"`
-	Media []Media `"json":"media$content"`
+	Title         string  `"json":"title"`
+	AvailableDate int     `"json":"media$availableDate"`
+	Media         []Media `"json":"media$content"`
 }
 
 func (e *Entry) IsHighlight() bool {
@@ -101,7 +102,7 @@ func getLinks() *Links {
 	}
 
 	fmt.Printf("%v", highlights)
-	fmt.Printf("%v", highlights[0].Media)
+	fmt.Printf("%v", len(highlights[0].Media))
 
 	links := Links{}
 
