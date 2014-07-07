@@ -26,6 +26,11 @@ func main() {
 		http.ServeFile(w, r, "public/styles.css")
 	}).Methods("GET")
 
+	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/x-icon")
+		http.ServeFile(w, r, "public/favicon.ico")
+	}).Methods("GET")
+
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
