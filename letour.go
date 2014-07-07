@@ -43,13 +43,13 @@ type Link struct {
 }
 
 type Feed struct {
-	Entries []Entry `"json":"entries"`
+	Entries []Entry `json:"entries"`
 }
 
 type Entry struct {
-	Title         string  `"json":"title"`
-	AvailableDate int     `"json":"media$availableDate"`
-	Media         []Media `"json":"media$content"`
+	Title         string  `json:"title"`
+	AvailableDate int     `json:"media$availableDate"`
+	Media         []Media `json:"media$content"`
 }
 
 func (e *Entry) IsHighlight() bool {
@@ -67,7 +67,7 @@ func (e *Entry) HighBitrateMedia() *Media {
 }
 
 type Media struct {
-	DownloadUrl string `"json":"plfile$downloadUrl"`
+	DownloadUrl string `json:"plfile$downloadUrl"`
 }
 
 func (m *Media) IsHighBitrate() bool {
@@ -91,7 +91,7 @@ func getLinks() *Links {
 	var feed Feed
 	err = json.Unmarshal(body, &feed)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 
 	highlights := []Entry{}
@@ -101,16 +101,13 @@ func getLinks() *Links {
 		}
 	}
 
-	fmt.Printf("%v", highlights)
-	fmt.Printf("%v", len(highlights[0].Media))
-
 	links := Links{}
 
 	for _, entry := range highlights {
 		if entry.IsHighlight() {
 			links = append(links, Link{
 				Title:    entry.Title,
-				VideoUrl: "",
+				VideoUrl: entry.HighBitrateMedia().DownloadUrl,
 			})
 		}
 	}
