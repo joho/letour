@@ -34,13 +34,13 @@
         If you want to watch the SBS highlights of the stage the morning after, but don't want the result spoiled by browsing past all the other articles and videos about the day's racing, then just use one of the links below to skip right through to the highlights without all the spoilers.
       </p>
       <ul>
-        <% video_links.each do |title, href| %>
+        {{range .}}
           <li>
-            <a href="<%= href %>" title="<%= title %>">
-              <%= title %>
+            <a href="{{ .VideoUrl }}" title="{{ .Title }}">
+              {{ .Title }}
             </a>
           </li>
-        <% end %>
+        {{ end }}
       </ul>
     </div>
     <footer>
