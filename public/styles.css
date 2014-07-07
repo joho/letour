@@ -11,12 +11,13 @@ a, a:visited, a:hover {
 }
 
 #container {
-  width: 550px;
+  width: 500px;
   margin: 0 auto;
 }
 
 header {
   border-bottom: solid 4px black;
+  margin-bottom: 1.5em;
 }
 
 header h1 {
