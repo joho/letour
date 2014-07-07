@@ -19,7 +19,6 @@ GEM
     method_source (0.7.1)
     mime-types (1.19)
     netrc (0.7.5)
-    nokogiri (1.5.5)
     pry (0.9.9.3)
       coderay (~> 1.0.5)
       method_source (~> 0.7.1)
@@ -46,7 +45,6 @@ PLATFORMS
 DEPENDENCIES
   foreman
   heroku
-  nokogiri
   pry
   puma
   sinatra

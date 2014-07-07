@@ -6,7 +6,6 @@ require "open-uri"
 require "json"
 
 # in the bundle
-require "nokogiri"
 require "sinatra"
 
 module TourHighlightsLinks
@@ -17,19 +16,6 @@ module TourHighlightsLinks
   end
 
 private
-  def self.get_links_from_html
-    sbs_domain = "http://www.sbs.com.au"
-    videos_url = sbs_domain + "/cyclingcentral/videos"
-
-    videos_page_doc = Nokogiri::HTML(open(videos_url))
-
-    videos_page_doc.css("a").select { |l|
-      !l.attributes["rel"] && # ignore anything with a rel (it's for fancy javascript)
-      l.attributes["title"] && l.attributes["title"].value =~ TITLE_REGEX
-    }.collect { |l|
-      [l.attributes["title"].value, sbs_domain + l.attributes["href"].value]
-    }
-  end
 
   def self.get_links_from_json
     feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-clips?form=json&byCategories=Sport%2FCycling&q=road&byCustomValue=%7BuseType%7D%7BHighlights%7D&range=1-100&defaultThumbnailAssetType=Thumbnail"
