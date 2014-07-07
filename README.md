@@ -6,7 +6,9 @@ Browsing through the SBS site to get straight to the highlights without getting 
 
 ## Tech Stuff?
 
-It hosts on heroku, so it's just a bundle + sinatra app + procfile
+Originally a Ruby + Sinatra app, now ported to Go. The [Port to Go Pull Request](https://github.com/joho/letour/pull/1) shows the code differences pretty well.
+
+It's hosted on heroku using the go buildpack.
 
 I used [these colours](http://www.colorcombos.com/colors/FFCC00)
 ---
