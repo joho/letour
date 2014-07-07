@@ -1,17 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/gorilla/mux"
+	"github.com/joho/prohttphandler"
 )
 
 func main() {
-	r := mux.NewRouter()
+	portNumber := os.Getenv("PORT")
+	if portNumber == "" {
+		portNumber = "5000"
+	}
+	listenOn := fmt.Sprintf(":%v", portNumber)
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	handler := prohttphandler.New("public")
+
+	handler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		links := getLinks()
 		t, err := template.ParseFiles("views/index.tmpl.html")
 		if err == nil {
@@ -19,20 +27,9 @@ func main() {
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-	}).Methods("GET")
+	})
 
-	r.HandleFunc("/styles.css", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/css")
-		http.ServeFile(w, r, "public/styles.css")
-	}).Methods("GET")
-
-	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "image/x-icon")
-		http.ServeFile(w, r, "public/favicon.ico")
-	}).Methods("GET")
-
-	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	log.Fatal(http.ListenAndServe(listenOn, handler))
 }
 
 type Links []Link
