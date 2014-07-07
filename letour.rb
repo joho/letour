@@ -18,7 +18,7 @@ module TourHighlightsLinks
 private
 
   def self.get_links_from_json
-    feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-clips?form=json&byCategories=Sport%2FCycling&q=road&byCustomValue=%7BuseType%7D%7BHighlights%7D&range=1-100&defaultThumbnailAssetType=Thumbnail"
+    feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-sbstv/?range=1-100&byCategories=Sport/Cycling&form=json&defaultThumbnailAssetType=Thumbnail"
 
     video_json = JSON.load(open(feed_url))
 
