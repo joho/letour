@@ -10,7 +10,7 @@ require "nokogiri"
 require "sinatra"
 
 module TourHighlightsLinks
-  TITLE_REGEX = /tour de france.+highlights.+(stage \d+|prologue)/i
+  TITLE_REGEX = /tour de france.+(stage \d+|prologue).+highlights/i
 
   def self.get_links
     get_links_from_json
@@ -23,20 +23,20 @@ private
 
     videos_page_doc = Nokogiri::HTML(open(videos_url))
 
-    videos_page_doc.css("a").select { |l| 
+    videos_page_doc.css("a").select { |l|
       !l.attributes["rel"] && # ignore anything with a rel (it's for fancy javascript)
-      l.attributes["title"] && l.attributes["title"].value =~ TITLE_REGEX 
-    }.collect { |l| 
+      l.attributes["title"] && l.attributes["title"].value =~ TITLE_REGEX
+    }.collect { |l|
       [l.attributes["title"].value, sbs_domain + l.attributes["href"].value]
     }
   end
 
   def self.get_links_from_json
-    feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-sbstv/?range=1-100&byCategories=Sport/Cycling&form=json&defaultThumbnailAssetType=Thumbnail"
+    feed_url = "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-clips?form=json&byCategories=Sport%2FCycling&q=road&byCustomValue=%7BuseType%7D%7BHighlights%7D&range=1-100&defaultThumbnailAssetType=Thumbnail"
 
     video_json = JSON.load(open(feed_url))
 
-    video_json["entries"].select { |entry| 
+    video_json["entries"].select { |entry|
       entry["title"] =~ TITLE_REGEX
     }.collect { |entry|
       HighlightsVideo.new(entry)
@@ -59,7 +59,7 @@ private
       download_url_key = "plfile$downloadUrl"
       preferred_bit_rate = "1500K"
 
-      @json_entry["media$content"].select { |content| 
+      @json_entry["media$content"].select { |content|
         content[download_url_key].include?(preferred_bit_rate)
       }.first[download_url_key]
     end
