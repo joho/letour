@@ -36,20 +36,23 @@ func main() {
 	log.Fatal(http.ListenAndServe(listenOn, handler))
 }
 
-type Links []Link
-type Link struct {
-	Title    string
-	VideoUrl string
-}
-
 type Feed struct {
 	Entries []Entry `json:"entries"`
 }
 
+func (f *Feed) Highlights() []Entry {
+	highlights := []Entry{}
+	for _, entry := range f.Entries {
+		if entry.IsHighlight() {
+			highlights = append(highlights, entry)
+		}
+	}
+	return highlights
+}
+
 type Entry struct {
-	Title         string  `json:"title"`
-	AvailableDate int     `json:"media$availableDate"`
-	Media         []Media `json:"media$content"`
+	Title string  `json:"title"`
+	Media []Media `json:"media$content"`
 }
 
 func (e *Entry) IsHighlight() bool {
@@ -66,6 +69,10 @@ func (e *Entry) HighBitrateMedia() *Media {
 	return nil
 }
 
+func (e *Entry) VideoUrl() string {
+	return e.HighBitrateMedia().DownloadUrl
+}
+
 type Media struct {
 	DownloadUrl string `json:"plfile$downloadUrl"`
 }
@@ -74,7 +81,7 @@ func (m *Media) IsHighBitrate() bool {
 	return strings.Contains(m.DownloadUrl, "1500K")
 }
 
-func getLinks() *Links {
+func getLinks() []Entry {
 	feedUrl := "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-sbstv/?range=1-100&byCategories=Sport/Cycling&form=json&defaultThumbnailAssetType=Thumbnail"
 
 	res, err := http.Get(feedUrl)
@@ -94,22 +101,5 @@ func getLinks() *Links {
 		return nil
 	}
 
-	highlights := []Entry{}
-	for _, entry := range feed.Entries {
-		if entry.IsHighlight() {
-			highlights = append(highlights, entry)
-		}
-	}
-
-	links := Links{}
-
-	for _, entry := range highlights {
-		if entry.IsHighlight() {
-			links = append(links, Link{
-				Title:    entry.Title,
-				VideoUrl: entry.HighBitrateMedia().DownloadUrl,
-			})
-		}
-	}
-	return &links
+	return feed.Highlights()
 }
