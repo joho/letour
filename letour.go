@@ -56,7 +56,7 @@ type Entry struct {
 }
 
 func (e *Entry) IsHighlight() bool {
-	match, _ := regexp.MatchString("(?i)tour de france.+(stage \\d+|prologue).+highlights", e.Title)
+	match, _ := regexp.MatchString("(?i)tour de france.+(stage \\d+|prologue|highlights).+(highlights|stage \\d+)", e.Title)
 	return match
 }
 
