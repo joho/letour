@@ -56,8 +56,20 @@ type Entry struct {
 }
 
 func (e *Entry) IsHighlight() bool {
-	match, _ := regexp.MatchString("(?i)tour de france.+(stage \\d+|prologue).+highlights", e.Title)
-	return match
+	titleRegexps := []string{
+		"(?i)tour de france.+stage \\d+.+highlights",
+		"(?i)tour de france highlights.+stage \\d+",
+	}
+
+	titleMatch := false
+	for _, titleRegexp := range titleRegexps {
+		if match, _ := regexp.MatchString(titleRegexp, e.Title); match {
+			titleMatch = true
+			break
+		}
+	}
+
+	return titleMatch
 }
 
 func (e *Entry) HighBitrateMedia() *Media {
