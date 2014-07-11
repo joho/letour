@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestRegex(t *testing.T) {
+func TestEntryIsHighlight(t *testing.T) {
 	goodTitles := []string{
 		"Tour de france stage 3 highlights",
 		"tour de france highlights stage 5",
