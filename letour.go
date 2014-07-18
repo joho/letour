@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -102,13 +101,9 @@ func getLinks() []Entry {
 	}
 
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil
-	}
 
 	var feed Feed
-	err = json.Unmarshal(body, &feed)
+	err = json.NewDecoder(res.Body).Decode(&feed)
 	if err != nil {
 		return nil
 	}
