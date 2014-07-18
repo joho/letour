@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/bugsnag/bugsnag-go"
 	"github.com/joho/prohttphandler"
 )
 
@@ -20,9 +21,9 @@ func main() {
 	}
 	listenOn := fmt.Sprintf(":%v", portNumber)
 
-	handler := prohttphandler.New("public")
+	appHandler := prohttphandler.New("public")
 
-	handler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	appHandler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		links := getLinks()
 		t, err := template.ParseFiles("views/index.tmpl.html")
 		if err == nil {
@@ -32,7 +33,23 @@ func main() {
 		}
 	})
 
+	bugsnagApiKey := os.Getenv("BUGSNAG_API_KEY")
+	handler := bugsnagHttpHandler(bugsnagApiKey, appHandler)
+
 	log.Fatal(http.ListenAndServe(listenOn, handler))
+}
+
+func bugsnagHttpHandler(bugsnagApiKey string, handler http.Handler) http.Handler {
+
+	if bugsnagApiKey == "" {
+		// env doesn't support error handling
+		return handler
+	} else {
+		bugsnag.Configure(bugsnag.Configuration{
+			APIKey: bugsnagApiKey,
+		})
+		return bugsnag.Handler(handler)
+	}
 }
 
 type Feed struct {
