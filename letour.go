@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strings"
+	"sort"
 
 	"github.com/bugsnag/bugsnag-go"
 	"github.com/joho/prohttphandler"
@@ -72,9 +72,11 @@ type Entry struct {
 }
 
 func (e *Entry) IsHighlight() bool {
+	// Tour De France 2015 Daily Highlights Stage 2
 	titleRegexps := []string{
 		"(?i)tour de france.+stage \\d+.+highlights",
 		"(?i)tour de france highlights.+stage \\d+",
+		"(?i)tour de france 2015 daily update.+stage \\d+",
 	}
 
 	titleMatch := false
@@ -88,13 +90,26 @@ func (e *Entry) IsHighlight() bool {
 	return titleMatch
 }
 
-func (e *Entry) HighBitrateMedia() *Media {
+type ByBitrate []Media
+
+func (b ByBitrate) Len() int           { return len(b) }
+func (b ByBitrate) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b ByBitrate) Less(i, j int) bool { return b[i].Bitrate < b[j].Bitrate }
+
+func (e *Entry) HighBitrateMedia() Media {
+	mpegs := []Media{}
 	for _, media := range e.Media {
-		if media.IsHighBitrate() {
-			return &media
+		if media.Format == "MPEG4" {
+			mpegs = append(mpegs, media)
 		}
 	}
-	return nil
+	sort.Sort(ByBitrate(mpegs))
+
+	if len(mpegs) > 0 {
+		return mpegs[len(mpegs)-1]
+	} else {
+		return Media{}
+	}
 }
 
 func (e *Entry) VideoUrl() string {
@@ -102,15 +117,13 @@ func (e *Entry) VideoUrl() string {
 }
 
 type Media struct {
+	Format      string `json:"plfile$format"`
+	Bitrate     int    `json:"plfile$bitrate"`
 	DownloadUrl string `json:"plfile$downloadUrl"`
 }
 
-func (m *Media) IsHighBitrate() bool {
-	return strings.Contains(m.DownloadUrl, "1500K")
-}
-
 func getLinks() []Entry {
-	feedUrl := "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-section-sbstv/?range=1-100&byCategories=Sport/Cycling&form=json&defaultThumbnailAssetType=Thumbnail"
+	feedUrl := "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-search?form=json&range=1-100&byCategories=Sport%2FCycling"
 
 	res, err := http.Get(feedUrl)
 	if err != nil {
