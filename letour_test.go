@@ -6,6 +6,8 @@ func TestEntryIsHighlight(t *testing.T) {
 	goodTitles := []string{
 		"Tour de france stage 3 highlights",
 		"tour de france highlights stage 5",
+		"Tour De France 2015 Daily Highlights Stage 2",
+		"Tour de France 2015 Daily Update Stage 3",
 	}
 
 	for _, title := range goodTitles {
