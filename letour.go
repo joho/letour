@@ -13,6 +13,10 @@ import (
 )
 
 func main() {
+	serveWebsite()
+}
+
+func serveWebsite() {
 	portNumber := os.Getenv("PORT")
 	if portNumber == "" {
 		portNumber = "5000"
@@ -31,21 +35,16 @@ func main() {
 		}
 	})
 
+	var handler http.Handler = appHandler
+
 	bugsnagApiKey := os.Getenv("BUGSNAG_API_KEY")
-	handler := bugsnagHttpHandler(bugsnagApiKey, appHandler)
-
-	log.Fatal(http.ListenAndServe(listenOn, handler))
-}
-
-func bugsnagHttpHandler(bugsnagApiKey string, handler http.Handler) http.Handler {
-
-	if bugsnagApiKey == "" {
-		// env doesn't support error handling
-		return handler
-	} else {
+	if bugsnagApiKey != "" {
 		bugsnag.Configure(bugsnag.Configuration{
 			APIKey: bugsnagApiKey,
 		})
-		return bugsnag.Handler(handler)
+		handler = bugsnag.Handler(appHandler)
 	}
+
+	fmt.Printf("Listening on %v", listenOn)
+	log.Fatal(http.ListenAndServe(listenOn, handler))
 }
