@@ -32,13 +32,9 @@
       <ul>
         {{range .}}
           <li>
-            {{ if .VideoUrl }}
-              <a href="{{ .VideoUrl }}" title="{{ .Title }}">
-                {{ .Title }}
-              </a>
-            {{ else }}
-              {{ .Title }} (no mp4 found)
-            {{ end }}
+            <a href="{{ .Url }}" title="{{ .Title }}">
+              {{ .Title }}
+            </a>
           </li>
         {{ end }}
       </ul>
