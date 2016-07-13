@@ -26,7 +26,7 @@ func serveWebsite() {
 	appHandler := prohttphandler.New("public")
 
 	appHandler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		links := sbs.GetLinks()
+		links := sbs.GetHighlights()
 		t, err := template.ParseFiles("views/index.tmpl.html")
 		if err == nil {
 			t.Execute(w, links)

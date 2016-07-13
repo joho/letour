@@ -2,96 +2,60 @@ package sbs
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"regexp"
-	"sort"
 )
 
-func GetLinks() []Entry {
-	feedUrl := "http://www.sbs.com.au/api/video_feed/f/Bgtm9B/sbs-search?form=json&range=1-100&byCategories=Sport%2FCycling"
+type MediaItemFeed []MediaItem
 
-	res, err := http.Get(feedUrl)
+type MediaItem struct {
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	ProgramName string `json:"programName"`
+}
+
+func (m *MediaItem) Url() string {
+	return fmt.Sprintf("http://www.sbs.com.au/ondemand/video/single/%v/?source=drupal&vertical=cyclingcentral\n", m.ID)
+}
+
+func GetHighlights() MediaItemFeed {
+	// curl http://www.sbs.com.au/cyclingcentral/?cid=infocus
+	// SBS.mpxWidget.setVideos
+
+	// generate urls like:
+	//		http://www.sbs.com.au/ondemand/video/single/713877571952/?source=drupal&vertical=cyclingcentral
+	res, err := http.Get("http://www.sbs.com.au/cyclingcentral/?cid=infocus")
 	if err != nil {
-		return nil
+		panic(err)
 	}
 
-	defer res.Body.Close()
-
-	var feed Feed
-	err = json.NewDecoder(res.Body).Decode(&feed)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil
+		panic(err)
 	}
 
-	return feed.Highlights()
-}
-
-type Feed struct {
-	Entries []Entry `json:"entries"`
-}
-
-func (f *Feed) Highlights() []Entry {
-	highlights := []Entry{}
-	for _, entry := range f.Entries {
-		if entry.IsHighlight() {
-			highlights = append(highlights, entry)
-		}
-	}
-	return highlights
-}
-
-type Entry struct {
-	Title string  `json:"title"`
-	Media []Media `json:"media$content"`
-}
-
-func (e *Entry) IsHighlight() bool {
-	// Tour De France 2015 Daily Highlights Stage 2
-	titleRegexps := []string{
-		"(?i)tour de france.+stage \\d+.+highlights",
-		"(?i)tour de france highlights.+stage \\d+",
-		"(?i)tour de france 2015 daily update.+stage \\d+",
+	r := regexp.MustCompile(`SBS.mpxWidget.setVideos\(mpxBeanId, (\[.+\]), \d.+;`)
+	subMatches := r.FindSubmatch(body)
+	if len(subMatches) != 2 {
+		panic("didn't find the mega json array")
 	}
 
-	titleMatch := false
-	for _, titleRegexp := range titleRegexps {
-		if match, _ := regexp.MatchString(titleRegexp, e.Title); match {
-			titleMatch = true
-			break
+	var feed MediaItemFeed
+	err = json.Unmarshal(subMatches[1], &feed)
+	if err != nil {
+		panic(err)
+	}
+
+	highlightsFeed := MediaItemFeed{}
+
+	for _, mediaItem := range feed {
+		if mediaItem.ProgramName == "Tour De France: Highlights" {
+			highlightsFeed = append(highlightsFeed, mediaItem)
 		}
 	}
 
-	return titleMatch
-}
-
-type ByBitrate []Media
-
-func (b ByBitrate) Len() int           { return len(b) }
-func (b ByBitrate) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
-func (b ByBitrate) Less(i, j int) bool { return b[i].Bitrate < b[j].Bitrate }
-
-func (e *Entry) HighBitrateMedia() Media {
-	mpegs := []Media{}
-	for _, media := range e.Media {
-		if media.Format == "MPEG4" {
-			mpegs = append(mpegs, media)
-		}
-	}
-	sort.Sort(ByBitrate(mpegs))
-
-	if len(mpegs) > 0 {
-		return mpegs[len(mpegs)-1]
-	} else {
-		return Media{}
-	}
-}
-
-func (e *Entry) VideoUrl() string {
-	return e.HighBitrateMedia().DownloadUrl
-}
-
-type Media struct {
-	Format      string `json:"plfile$format"`
-	Bitrate     int    `json:"plfile$bitrate"`
-	DownloadUrl string `json:"plfile$downloadUrl"`
+	return highlightsFeed
 }
