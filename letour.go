@@ -37,10 +37,10 @@ func serveWebsite() {
 
 	var handler http.Handler = appHandler
 
-	bugsnagApiKey := os.Getenv("BUGSNAG_API_KEY")
-	if bugsnagApiKey != "" {
+	bugsnagAPIKey := os.Getenv("BUGSNAG_API_KEY")
+	if bugsnagAPIKey != "" {
 		bugsnag.Configure(bugsnag.Configuration{
-			APIKey: bugsnagApiKey,
+			APIKey: bugsnagAPIKey,
 		})
 		handler = bugsnag.Handler(appHandler)
 	}
