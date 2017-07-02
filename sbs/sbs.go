@@ -51,8 +51,9 @@ func GetHighlights() MediaItemFeed {
 
 	highlightsFeed := MediaItemFeed{}
 
+	titleRegexp := regexp.MustCompile(`(?i)tdf 2017 stage \d+ highlights`)
 	for _, mediaItem := range feed {
-		if mediaItem.ProgramName == "Tour De France: Highlights" {
+		if titleRegexp.MatchString(mediaItem.Title) {
 			highlightsFeed = append(highlightsFeed, mediaItem)
 		}
 	}
