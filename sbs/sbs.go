@@ -21,7 +21,22 @@ func (m *MediaItem) Url() string {
 	return fmt.Sprintf("http://www.sbs.com.au/ondemand/video/single/%v/?source=drupal&vertical=cyclingcentral\n", m.ID)
 }
 
+// GetHighlights returns all the videos that _should_ be highlights
 func GetHighlights() MediaItemFeed {
+	highlightsFeed := MediaItemFeed{}
+
+	titleRegexp := regexp.MustCompile(`(?i)tdf 2017:? stage \d+ highlights`)
+	for _, mediaItem := range AllVideos() {
+		if titleRegexp.MatchString(mediaItem.Title) {
+			highlightsFeed = append(highlightsFeed, mediaItem)
+		}
+	}
+
+	return highlightsFeed
+}
+
+// AllVideos returns every media item we find on the SBS feed
+func AllVideos() MediaItemFeed {
 	// curl http://www.sbs.com.au/cyclingcentral/?cid=infocus
 	// SBS.mpxWidget.setVideos
 
@@ -49,14 +64,5 @@ func GetHighlights() MediaItemFeed {
 		panic(err)
 	}
 
-	highlightsFeed := MediaItemFeed{}
-
-	titleRegexp := regexp.MustCompile(`(?i)tdf 2017 stage \d+ highlights`)
-	for _, mediaItem := range feed {
-		if titleRegexp.MatchString(mediaItem.Title) {
-			highlightsFeed = append(highlightsFeed, mediaItem)
-		}
-	}
-
-	return highlightsFeed
+	return feed
 }

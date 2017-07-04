@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -13,7 +14,13 @@ import (
 )
 
 func main() {
-	serveWebsite()
+	debug := flag.Bool("debug", false, "spit out debugging info on what SBS serves")
+	flag.Parse()
+	if *debug {
+		debugAPI()
+	} else {
+		serveWebsite()
+	}
 }
 
 func serveWebsite() {
@@ -47,4 +54,15 @@ func serveWebsite() {
 
 	fmt.Printf("Listening on %v", listenOn)
 	log.Fatal(http.ListenAndServe(listenOn, handler))
+}
+
+func debugAPI() {
+	fmt.Println("Matching Highlights")
+	for _, video := range sbs.GetHighlights() {
+		fmt.Printf("%#v\n", video)
+	}
+	fmt.Println("\nAll Videos")
+	for _, video := range sbs.AllVideos() {
+		fmt.Printf("%#v\n", video)
+	}
 }
