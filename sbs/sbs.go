@@ -18,14 +18,14 @@ type MediaItem struct {
 }
 
 func (m *MediaItem) Url() string {
-	return fmt.Sprintf("http://www.sbs.com.au/ondemand/video/single/%v/?source=drupal&vertical=cyclingcentral\n", m.ID)
+	return fmt.Sprintf("https://www.sbs.com.au/ondemand/video/single/%v/?source=drupal&vertical=cyclingcentral\n", m.ID)
 }
 
 // GetHighlights returns all the videos that _should_ be highlights
 func GetHighlights() MediaItemFeed {
 	highlightsFeed := MediaItemFeed{}
 
-	titleRegexp := regexp.MustCompile(`(?i)tdf 2017:? stage \d+ highlights`)
+	titleRegexp := regexp.MustCompile(`(?i)\: tour de france 2020`)
 	for _, mediaItem := range AllVideos() {
 		if titleRegexp.MatchString(mediaItem.Title) {
 			highlightsFeed = append(highlightsFeed, mediaItem)
@@ -42,7 +42,7 @@ func AllVideos() MediaItemFeed {
 
 	// generate urls like:
 	//		http://www.sbs.com.au/ondemand/video/single/713877571952/?source=drupal&vertical=cyclingcentral
-	res, err := http.Get("http://www.sbs.com.au/cyclingcentral/?cid=infocus")
+	res, err := http.Get("https://www.sbs.com.au/cyclingcentral/")
 	if err != nil {
 		panic(err)
 	}
@@ -53,16 +53,23 @@ func AllVideos() MediaItemFeed {
 	}
 
 	r := regexp.MustCompile(`SBS.mpxWidget.setVideos\(mpxBeanId, (\[.+\]), \d.+;`)
-	subMatches := r.FindSubmatch(body)
-	if len(subMatches) != 2 {
+	subMatches := r.FindAllSubmatch(body, -1)
+	
+	if len(subMatches) == 0 {
 		panic("didn't find the mega json array")
 	}
 
-	var feed MediaItemFeed
-	err = json.Unmarshal(subMatches[1], &feed)
-	if err != nil {
-		panic(err)
-	}
+	var fullFeed = MediaItemFeed{}
 
-	return feed
+	for _, v := range subMatches {
+		var feed MediaItemFeed
+		err = json.Unmarshal(v[1], &feed)
+		if err != nil {
+			panic(err)
+		}
+		
+		fullFeed = append(fullFeed, feed...)
+	}
+	
+	return fullFeed
 }

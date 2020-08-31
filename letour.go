@@ -37,6 +37,7 @@ func serveWebsite() {
 		t, err := template.ParseFiles("views/index.tmpl.html")
 		if err == nil {
 			t.Execute(w, links)
+			fmt.Println("200 OK")
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -52,7 +53,7 @@ func serveWebsite() {
 		handler = bugsnag.Handler(appHandler)
 	}
 
-	fmt.Printf("Listening on %v", listenOn)
+	fmt.Printf("Listening on %v\n", listenOn)
 	log.Fatal(http.ListenAndServe(listenOn, handler))
 }
 
