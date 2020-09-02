@@ -3,6 +3,7 @@ body {
 
   font-family: Helvetica, Arial, sans-serif;
   color: black;
+  font-size: 110%;
 }
 
 a, a:visited, a:hover {
@@ -21,7 +22,7 @@ header {
 }
 
 header h1 {
-  font-size: 3em;
+  font-size: 2.8em;
   margin-bottom: 5px;
 }
 
@@ -36,6 +37,8 @@ div[role="main"] {
 
 li {
   list-style-type: square;
+  line-height: 1.4em;
+  height: auto;
 }
 
 p {
