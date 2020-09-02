@@ -54,7 +54,7 @@ func AllVideos() MediaItemFeed {
 
 	r := regexp.MustCompile(`SBS.mpxWidget.setVideos\(mpxBeanId, (\[.+\]), \d.+;`)
 	subMatches := r.FindAllSubmatch(body, -1)
-	
+
 	if len(subMatches) == 0 {
 		panic("didn't find the mega json array")
 	}
@@ -67,9 +67,20 @@ func AllVideos() MediaItemFeed {
 		if err != nil {
 			panic(err)
 		}
-		
-		fullFeed = append(fullFeed, feed...)
+
+		for _, video := range feed {
+			exists := false
+			for _, existing := range fullFeed {
+				if existing.ID == video.ID {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				fullFeed = append(fullFeed, video)
+			}
+		}
 	}
-	
+
 	return fullFeed
 }
