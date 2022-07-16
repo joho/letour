@@ -62,8 +62,4 @@ func debugAPI() {
 	for _, video := range sbs.GetHighlights() {
 		fmt.Printf("%#v\n", video)
 	}
-	fmt.Println("\nAll Videos")
-	for _, video := range sbs.AllVideos() {
-		fmt.Printf("%#v\n", video)
-	}
 }
