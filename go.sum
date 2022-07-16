@@ -1,0 +1,10 @@
+github.com/bitly/go-simplejson v0.5.0 h1:6IH+V8/tVMab511d5bn4M7EwGXZf9Hj6i2xSwkNEM+Y=
+github.com/bitly/go-simplejson v0.5.0/go.mod h1:cXHtHw4XUPsvGaxgjIAn8PhEWG9NfngEKAMDJEczWVA=
+github.com/bugsnag/bugsnag-go v0.0.0-20140807183905-5cec79a1966e h1:YwXzXd5aR29EO97+gZ+mZ7/jZXrphGZATH6lKb+5AHg=
+github.com/bugsnag/bugsnag-go v0.0.0-20140807183905-5cec79a1966e/go.mod h1:2oa8nejYd4cQ/b0hMIopN0lCRxU0bueqREvZLWFrtK8=
+github.com/joho/prohttphandler v0.0.0-20140210233647-7d7ff700f5f3 h1:nbjdJYwEHtHinT0/RoIyH4nErqXj3hgHDaE5tPGYT9c=
+github.com/joho/prohttphandler v0.0.0-20140210233647-7d7ff700f5f3/go.mod h1:2L+vT62w8bY/rFA2O+Doxbku8ADVU7nT3DLAbz2UpIg=
+github.com/mitchellh/osext v0.0.0-20130617224835-0dd3f918b21b h1:lwcHQt5gARsF9+ywc7eP6Y1IlyEPP4D/2DleF4ZsLag=
+github.com/mitchellh/osext v0.0.0-20130617224835-0dd3f918b21b/go.mod h1:OkQIRizQZAeMln+1tSwduZz7+Af5oFlKirV/MSYes2A=
+github.com/mitchellh/panicwrap v0.0.0-20140610171732-45cbfd3bae25 h1:52JdBsNBcS9C5ekeiSrt78rsy8GmFI62KkYp/DnMBVw=
+github.com/mitchellh/panicwrap v0.0.0-20140610171732-45cbfd3bae25/go.mod h1:QuAqW7/z+iv6aWFJdrA8kCbsF0OOJVKCICqTcYBexuY=
