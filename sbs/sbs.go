@@ -102,8 +102,6 @@ func GetHighlights() []Item {
 
 	var nextData = NextData{}
 
-	fmt.Printf("%v\n", string(subMatches[0][1]))
-
 	err = json.Unmarshal(subMatches[0][1], &nextData)
 	if err != nil {
 		panic(err)
@@ -114,7 +112,8 @@ func GetHighlights() []Item {
 	blocks := nextData.Props.PageProps.PageContent.Blocks
 	for _, block := range blocks {
 		if block.TypeName == "CardShelf" && block.Title == "Daily highlights" {
-			items = append(items, items...)
+			fmt.Printf("%v", items)
+			items = append(items, block.Items...)
 		}
 	}
 
