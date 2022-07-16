@@ -8,41 +8,82 @@ import (
 	"regexp"
 )
 
-type MediaItemFeed []MediaItem
-
-type MediaItem struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	ProgramName string `json:"programName"`
+type NextData struct {
+	Props Props `json:"props"`
 }
 
-func (m *MediaItem) Url() string {
-	return fmt.Sprintf("https://www.sbs.com.au/ondemand/video/single/%v/?source=drupal&vertical=cyclingcentral\n", m.ID)
+type Props struct {
+	PageProps PageProps `json:"pageProps"`
 }
 
-// GetHighlights returns all the videos that _should_ be highlights
-func GetHighlights() MediaItemFeed {
-	highlightsFeed := MediaItemFeed{}
+type PageProps struct {
+	PageContent PageContent `json:"pageContent"`
+}
 
-	titleRegexp := regexp.MustCompile(`(?i)\: tour de france 2020`)
-	for _, mediaItem := range AllVideos() {
-		if titleRegexp.MatchString(mediaItem.Title) {
-			highlightsFeed = append(highlightsFeed, mediaItem)
-		}
+type PageContent struct {
+	Blocks []Block `json:"blocks"`
+}
+
+type Block struct {
+	TypeName string `json:"__typename"`
+	Title    string `json:"title"`
+	Items    []Item `json:"items"`
+}
+
+type Item struct {
+	Type  string `json:"type"`
+	Title string `json:"title"`
+	Route Route  `json:"route"`
+}
+
+type Route struct {
+	RoutePaths []string `json:"routePaths"`
+}
+
+/*
+{
+            "__typename": "CardShelf",
+            "id": "00000181-bac6-d3c6-a997-bef655430000",
+            "blockType": "CardShelf",
+            "blockTheme": "OD",
+            "title": "Daily highlights",
+            "maxItems": 4,
+            "callToAction": {
+              "route": null,
+              "url": "https://www.sbs.com.au/ondemand/program/tour-de-france-2022",
+              "__typename": "CallToAction",
+              "text": "Visit SBS On Demand for more highlights"
+            },
+            "items": [
+              {
+                "type": "video",
+                "title": "Daily Highlights Stage 13: Tour de France 2022",
+                "linkUrl": null,
+                "linkTarget": null,
+                "locale": {
+                  "languageCode": "en-AU",
+                  "__typename": "Locale"
+                },
+*/
+
+func (m *Item) Url() string {
+	if m != nil {
+		return fmt.Sprintf("https://www.sbs.com.au%v\n", m.Route.RoutePaths[0])
 	}
 
-	return highlightsFeed
+	return ""
 }
 
 // AllVideos returns every media item we find on the SBS feed
-func AllVideos() MediaItemFeed {
+func GetHighlights() []Item {
 	// curl http://www.sbs.com.au/cyclingcentral/?cid=infocus
 	// SBS.mpxWidget.setVideos
 
+	// <script id="__NEXT_DATA__" type="application/json">
+
 	// generate urls like:
 	//		http://www.sbs.com.au/ondemand/video/single/713877571952/?source=drupal&vertical=cyclingcentral
-	res, err := http.Get("https://www.sbs.com.au/cyclingcentral/")
+	res, err := http.Get("https://www.sbs.com.au/sport/tour-de-france")
 	if err != nil {
 		panic(err)
 	}
@@ -52,35 +93,30 @@ func AllVideos() MediaItemFeed {
 		panic(err)
 	}
 
-	r := regexp.MustCompile(`SBS.mpxWidget.setVideos\(mpxBeanId, (\[.+\]), \d.+;`)
+	r := regexp.MustCompile(`<script id="__NEXT_DATA__" type="application/json">(.*)</script>`)
 	subMatches := r.FindAllSubmatch(body, -1)
 
-	if len(subMatches) == 0 {
+	if len(subMatches) != 1 {
 		panic("didn't find the mega json array")
 	}
 
-	var fullFeed = MediaItemFeed{}
+	var nextData = NextData{}
 
-	for _, v := range subMatches {
-		var feed MediaItemFeed
-		err = json.Unmarshal(v[1], &feed)
-		if err != nil {
-			panic(err)
-		}
+	fmt.Printf("%v\n", string(subMatches[0][1]))
 
-		for _, video := range feed {
-			exists := false
-			for _, existing := range fullFeed {
-				if existing.ID == video.ID {
-					exists = true
-					break
-				}
-			}
-			if !exists {
-				fullFeed = append(fullFeed, video)
-			}
+	err = json.Unmarshal(subMatches[0][1], &nextData)
+	if err != nil {
+		panic(err)
+	}
+
+	items := []Item{}
+
+	blocks := nextData.Props.PageProps.PageContent.Blocks
+	for _, block := range blocks {
+		if block.TypeName == "CardShelf" && block.Title == "Daily highlights" {
+			items = append(items, items...)
 		}
 	}
 
-	return fullFeed
+	return items
 }
